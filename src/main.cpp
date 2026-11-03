@@ -1,51 +1,32 @@
 #include <iostream>
 #include <string>
 #include "math/container/tensor.h"
-#include "math/algorithm/algo.h"
+#include "nn/network.h"
 
-// Helper function to visualize the matrices in the terminal
-void print_matrix(const math::container::Matrix& m, const std::string& name) {
-    std::cout << "--- " << name << " (" << m.rows << "x" << m.cols << ") ---\n";
-    for (size_t i = 0; i < m.rows; ++i) {
-        for (size_t j = 0; j < m.cols; ++j) {
-            std::cout << m(i, j) << "\t";
-        }
-        std::cout << "\n";
-    }
-    std::cout << "\n";
+void print_shape(const math::container::Matrix& m, const std::string& name) {
+    std::cout << name << " shape: (" << m.rows << "x" << m.cols << ")\n";
 }
 
 int main() {
-    // 1. Initialize Input Matrix X (Simulating a batch of 2 samples, 2 features each)
-    math::container::Matrix X(2, 2);
-    X(0, 0) = 1.0f;  X(0, 1) = 2.0f;
-    X(1, 0) = -1.0f; X(1, 1) = 0.5f;
+    // Simulate a batch of 32 MNIST images (32 samples, 784 pixels each)
+    math::container::Matrix batch_X = {32, 784, 0.1f}; // 0.1f is dummy pixel data
+    print_shape(batch_X, "Input Batch");
 
-    print_matrix(X, "Input X");
+    // Initialize the Neural Network
+    nn::NeuralNetwork model;
 
-    // 2. Initialize Weights Matrix W (Mapping 2 input features to 3 output features)
-    math::container::Matrix W(2, 3);
-    W(0, 0) = 0.5f; W(0, 1) = -1.0f; W(0, 2) = 2.0f;
-    W(1, 0) = 1.0f; W(1, 1) = 0.5f;  W(1, 2) = -1.0f;
+    // Run the forward pass
+    math::container::Matrix logits = model.forward(batch_X);
 
-    print_matrix(W, "Weights W");
+    // The output should perfectly match (batch_size, num_classes) -> (32, 10)
+    print_shape(logits, "Output Logits");
 
-    // 3. Initialize Bias Vector b (3 elements, one for each output feature)
-    // Utilizing the std::initializer_list constructor from your Vector class
-    math::container::Vector b = {0.5f, -0.5f, 1.0f}; 
-
-    // 4. Test Forward Pass Step 1: Matrix Multiplication (X @ W)
-    math::container::Matrix Z = math::algorithm::matmul(X, W);
-    print_matrix(Z, "Matmul Output (X * W)");
-
-    // 5. Test Forward Pass Step 2: Bias Addition (Broadcasting)
-    math::container::Matrix Z_bias = math::algorithm::add_bias(Z, b);
-    print_matrix(Z_bias, "Biased Output (Z + b)");
-
-    // 6. Test Forward Pass Step 3: ReLU Activation
-    // Any negative values from Z_bias should become 0.0
-    math::container::Matrix A = math::algorithm::relu(Z_bias);
-    print_matrix(A, "Activated Output (ReLU)");
+    // Print the raw logit scores for the first image in the batch
+    std::cout << "\nLogits for image 0:\n";
+    for(size_t j = 0; j < 10; ++j) {
+        std::cout << logits(0, j) << " ";
+    }
+    std::cout << "\n";
 
     return 0;
 }
