@@ -11,8 +11,6 @@ Matrix matmul(const Matrix& A, const Matrix& B) {
     }
     
     Matrix C(A.rows, B.cols, 0.0f);
-    
-    // Optimized i-k-j loop order for better CPU cache utilization
     for (size_t i = 0; i < A.rows; ++i) {
         for (size_t k = 0; k < A.cols; ++k) {
             float a_ik = A(i, k);
@@ -24,7 +22,6 @@ Matrix matmul(const Matrix& A, const Matrix& B) {
     return C;
 }
 
-// Broadcasting: Adds a 1D Vector (bias) to every row of a 2D Matrix
 Matrix add_bias(const Matrix& X, const Vector& b) {
     if (X.cols != b.size()) {
         throw std::invalid_argument("Bias dimension mismatch: b.size() must equal X.cols");
@@ -39,13 +36,40 @@ Matrix add_bias(const Matrix& X, const Vector& b) {
     return Y;
 }
 
-// ReLU Activation
 Matrix relu(const Matrix& X) {
     Matrix Y(X.rows, X.cols);
     for (size_t i = 0; i < X.data.size(); ++i) {
         Y.data[i] = std::max(0.0f, X.data[i]);
     }
     return Y;
+}
+
+Matrix transpose(const Matrix& A) {
+    Matrix T(A.cols, A.rows);
+    for (size_t i = 0; i < A.rows; ++i) {
+        for (size_t j = 0; j < A.cols; ++j) {
+            T(j, i) = A(i, j);
+        }
+    }
+    return T;
+}
+
+Vector sum_rows(const Matrix& A) {
+    Vector v(A.cols, 0.0f);
+    for (size_t i = 0; i < A.rows; ++i) {
+        for (size_t j = 0; j < A.cols; ++j) {
+            v[j] += A(i, j);
+        }
+    }
+    return v;
+}
+
+Matrix relu_backward(const Matrix& A, const Matrix& dL_dA) {
+    Matrix dZ(A.rows, A.cols, 0.0f);
+    for (size_t i = 0; i < A.data.size(); ++i) {
+        dZ.data[i] = (A.data[i] > 0.0f) ? dL_dA.data[i] : 0.0f;
+    }
+    return dZ;
 }
 
 } // namespace algorithm

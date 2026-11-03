@@ -7,4 +7,6 @@ add_executable(ML_DEMO src/main.cpp
     src/math/container/tensor.cpp
     src/nn/linear.cpp
     src/nn/network.cpp
+    src/nn/loss.cpp
+    src/nn/optimizer.cpp
 )

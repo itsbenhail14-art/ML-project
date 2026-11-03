@@ -1,6 +1,6 @@
 #include "network.h"
 
-math::container::Matrix nn::NeuralNetwork::forward(const math::container::Matrix& X) const {
+math::container::Matrix nn::NeuralNetwork::forward(const math::container::Matrix& X) {
     // First Hidden Layer + ReLU
     math::container::Matrix Z1 = fc1.forward(X);
     math::container::Matrix A1 = math::algorithm::relu(Z1);

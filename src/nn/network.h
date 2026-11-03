@@ -13,7 +13,7 @@ public:
     // 784 inputs -> 32 hidden -> 32 hidden -> 10 output classes
     NeuralNetwork() : fc1(784, 32), fc2(32, 32), fc3(32, 10) {}
     
-    math::container::Matrix forward(const math::container::Matrix& X) const;
+    math::container::Matrix forward(const math::container::Matrix& X);
 };
 
 } // namespace nn
