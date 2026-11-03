@@ -1,2 +1,5 @@
 main.exe
 .vscode/tasks.json
+
+.vscode
+build/*
