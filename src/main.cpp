@@ -16,7 +16,7 @@ int main() {
     // 1. Hyperparameters
     const size_t batch_size = 64;
     const float learning_rate = 0.05f;
-    const int epochs = 5;
+    const int epochs = 10;
 
     // --- PUT THE PATHS RIGHT HERE ---
     // The "../" moves up out of the 'build' folder, then into 'dataset'
